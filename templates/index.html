@@ -43,25 +43,25 @@
         <!-- Game Entries Column -->
         {% set col_1 = 12  %}
         {% if details["TotalUsers"] %} 
-           {% set col_1 = 4 %}
+           
+           {% if details["User"] not in "None" %}
+              {% set col_1 = 4 %}
         <div class="col-md-8">
-
-
-          <h1 class="my-4">Start Playing</h1>
+          <h1 class="my-4">Start Playing {{ details["User"].title() }}</h1>
 
           <!-- Game Post -->
           <div class="card mb-4">
             <div class="jumbotron jumbotron-fluid">
               <div class="container">
                 <h1>Question:</h1>      
-                <p>What is the name of the house next to that house?</p>
+                <p>{{ details["QuestionsAnswers"]["question"] }}</p>
               </div>
             </div>
             <div class="card-body">
               <h2 class="card-title">Answer:</h2>
-              <form action="index.html" method="POST">
+              <form action="index.html" method="POST" id="formAnswers" name="formAnswers" onclicked="SubmitForm();">
                 <div class="answer">
-                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ details["TotalUsers"] }}">
+                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ details["QuestionsAnswers"]["answer"] }}">
                   <button type="submit" class="btn btn-primary">Submit Your Answer</button>
                 </div>
               </form>
@@ -71,13 +71,15 @@
           </div>
           
         </div>
+           {% endif %}
        {% endif %} 
         
         
         <!-- Sidebar Widgets Column -->
         <div class="col-md-{{ col_1 }}">
 
-          <!-- Search Widget -->
+          <!-- Registration Table -->
+          {% if details["TotalUsers"] <= 9  %} 
           <div class="card my-4">
             <h5 class="card-header">Enter Users</h5>
             <div class="card-body">
@@ -96,8 +98,10 @@
               </div>
             </div>
           </div>
-          <!-- Categories Widget -->
+          {% endif %}
+          <!-- Scores Table -->
           {% if details["TotalUsers"] %}
+          {% if details["User"] not in "None" %}
           <div class="card my-4">
             <h5 class="card-header">Scores Board</h5>
             <div class="card-body">
@@ -135,6 +139,7 @@
             </div>
           </div>
           {% endif %}
+          {% endif %}
         </div>
       </div>
       <!-- /.row -->
@@ -160,6 +165,16 @@
     {
         document.getElementById('time').innerHTML = Date();  
     }
+    
+    function SubmitForm()
+    {
+        if($("#formAnswers").is("clicked")){
+            document.forms['formAnswers'].action='http://cl.exct.net/subscribe.aspx';
+            document.forms['formAnswers'].target='_blank';
+            document.forms['formAnswers'].submit();
+        }
+        return false;
+    }   
   </script>
   </body>
 
