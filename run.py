@@ -13,6 +13,13 @@ User information:
 When number 1 is returned the username chosen already exists
 When number 2 is returned the
 """
+def random_question():
+    """This is to generate a random questions and answer combined."""
+    with open("data/questions.json", "r") as questions:
+        data = json.load(questions)
+        return random.choice(data)
+            
+            
 def write_to_file(file_name, data):
     """This function handles all the file writing"""
     with open(file_name, "a") as file:
@@ -74,9 +81,11 @@ def index_start():
 def index(user):
     if user == "":
         user = "None"
-    game_info = {"Status": "0", "TotalUsers": 0, "Scores": "1"}
+    game_info = {"Status": "0", "TotalUsers": 0, "User": ""}
+    game_info["User"] = user
     game_info["Status"] = "G90"
     game_info["TotalUsers"] = count_users()
+    game_info["QuestionsAnswers"] = random_question()
     return render_template("index.html", details = game_info)   
       
 ########################################################
