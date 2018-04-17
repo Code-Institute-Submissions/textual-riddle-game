@@ -6,9 +6,9 @@
     <meta name="description" content="Riddle Game">
     <title>Text Riddle Game</title>
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
   </head>
 
   <body>
@@ -47,16 +47,20 @@
 
           <!-- Game Post -->
           <div class="card mb-4">
-<div class="jumbotron jumbotron-fluid">
-  <div class="container">
-    <h1>Bootstrap Tutorial</h1>      
-    <p>Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p>
-  </div>
-</div>
+            <div class="jumbotron jumbotron-fluid">
+              <div class="container">
+                <h1>Question:</h1>      
+                <p>What is the name of the house next to that house?</p>
+              </div>
+            </div>
             <div class="card-body">
-              <h2 class="card-title">Post Title</h2>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-              <a href="#" class="btn btn-primary">Read More &rarr;</a>
+              <h2 class="card-title">Answer:</h2>
+              <form action="index.html" method="POST">
+                <div class="answer">
+                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ name }}">
+                  <button type="submit" class="btn btn-primary">Submit Your Answer</button>
+                </div>
+              </form>
             </div>
             <div class="card-footer text-muted">
             </div>
@@ -71,10 +75,12 @@
             <h5 class="card-header">Enter Users</h5>
             <div class="card-body">
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                  <button class="btn btn-secondary" type="button">Go!</button>
-                </span>
+                <form action="/index" method="POST" name="user_form">
+                  <input type="text" class="form-control" name="user_name" placeholder="Enter your first name ..">
+                  <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="submit">Go!</button>
+                  </span>
+                </form>
               </div>
             </div>
           </div>
@@ -84,6 +90,7 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-lg-12">
+                  <div id="time"></div>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -128,7 +135,18 @@
       </div>
       <!-- /.container -->
     </footer>
-
+  <script type="text/javascript">
+    window.onload = startInterval;
+    function startInterval()
+    {
+        setInterval("startTime();",1000);
+    }
+    
+    function startTime()
+    {
+        document.getElementById('time').innerHTML = Date();  
+    }
+  </script>
   </body>
 
 </html>
