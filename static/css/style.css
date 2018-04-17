@@ -4,6 +4,9 @@ body {
 .answer>button{
   margin-top: 5px;
 }
+.users>button{
+  margin-top: 5px;
+}
 @media (min-width: 992px) {
   body {
     padding-top: 56px;

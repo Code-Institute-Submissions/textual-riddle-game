@@ -41,7 +41,11 @@
       <div class="row">
 
         <!-- Game Entries Column -->
+        {% set col_1 = 12  %}
+        {% if details["TotalUsers"] %} 
+           {% set col_1 = 4 %}
         <div class="col-md-8">
+
 
           <h1 class="my-4">Start Playing</h1>
 
@@ -57,7 +61,7 @@
               <h2 class="card-title">Answer:</h2>
               <form action="index.html" method="POST">
                 <div class="answer">
-                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ name }}">
+                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ details["TotalUsers"] }}">
                   <button type="submit" class="btn btn-primary">Submit Your Answer</button>
                 </div>
               </form>
@@ -65,10 +69,13 @@
             <div class="card-footer text-muted">
             </div>
           </div>
+          
         </div>
-
+       {% endif %} 
+        
+        
         <!-- Sidebar Widgets Column -->
-        <div class="col-md-4">
+        <div class="col-md-{{ col_1 }}">
 
           <!-- Search Widget -->
           <div class="card my-4">
@@ -76,15 +83,21 @@
             <div class="card-body">
               <div class="input-group">
                 <form action="/index" method="POST" name="user_form">
-                  <input type="text" class="form-control" name="user_name" placeholder="Enter your first name ..">
+                  {% if name == "1" %}
+                  <p class="alert alert-danger">User already exists.</p>
+                  {% endif %}
+                  <input type="text" class="form-control" name="user_name" placeholder="Enter A Username">
                   <span class="input-group-btn">
-                    <button class="btn btn-secondary" type="submit">Go!</button>
+                    <div class="users">
+                      <button class="btn btn-secondary" type="submit">Go!</button>
+                    </div>
                   </span>
                 </form>
               </div>
             </div>
           </div>
           <!-- Categories Widget -->
+          {% if details["TotalUsers"] %}
           <div class="card my-4">
             <h5 class="card-header">Scores Board</h5>
             <div class="card-body">
@@ -121,6 +134,7 @@
               </div>
             </div>
           </div>
+          {% endif %}
         </div>
       </div>
       <!-- /.row -->
