@@ -9,6 +9,7 @@
     <!-- Custom styles for this template -->
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.min.css') }}">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   </head>
 
   <body>
@@ -55,14 +56,23 @@
               <div class="container">
                 <h1>Question:</h1>      
                 <p>{{ details["QuestionsAnswers"]["question"] }}</p>
+                
               </div>
+              <p style="margin-left:15px; color:#C0C0C0;">POINTS LEFT: <span id="points">10</span>{{ details["TestItCame"] }}</p>
             </div>
             <div class="card-body">
-              <h2 class="card-title">Answer:</h2>
-              <form action="index.html" method="POST" id="formAnswers" name="formAnswers" onclicked="SubmitForm();">
+              <h2 class="card-title" id="answerAttempts">Answer:</h2>
+              <form action="/index/" method="POST" id="formAnswers" name="formAnswers" onsubmit="return false">
                 <div class="answer">
-                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer" value="{{ details["QuestionsAnswers"]["answer"] }}">
-                  <button type="submit" class="btn btn-primary">Submit Your Answer</button>
+                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer">
+                  <button type="submit" class="btn btn-primary" id="btnAnswer">Submit Your Answer</button>
+                  <h5 style="float:right;"><span class="label label-default"><a href="/{{ details["User"].title() }}">[ Skip ]</a></span></h5>
+                  <p class="incorrectA" id="incorrectA"></p><span id="guesses"></span>
+                  <input name="this_user" type="hidden" id="this_user" value="{{ details["User"] }}" />
+                  <input name="this_user_reg_status" type="hidden" id="this_user_reg_status" value="{{ details["UserRegState"] }}" />
+                  <input name="attempts" type="hidden" id="attempts" value="0" />
+                  <input name="user_received_question" type="hidden" id="user_received_question" value="{{ details["QuestionsAnswers"]["id"] }}" />
+                  <input name="user_received_answer" type="hidden" id="user_received_answer" value="{{ details["QuestionsAnswers"]["answer"] }}" />
                 </div>
               </form>
             </div>
@@ -79,14 +89,17 @@
         <div class="col-md-{{ col_1 }}">
 
           <!-- Registration Table -->
+          {% if not details["UserRegState"] %} 
           {% if details["TotalUsers"] <= 9  %} 
+          {% endif %}
+          {% endif %}          
           <div class="card my-4">
-            <h5 class="card-header">Enter Users</h5>
+            <h5 class="card-header">Enter User</h5>
             <div class="card-body">
               <div class="input-group">
                 <form action="/index" method="POST" name="user_form">
-                  {% if name == "1" %}
-                  <p class="alert alert-danger">User already exists.</p>
+                  {% if true %}
+                  <p>{{ details["Notice"][details["Status"]] }}</p>
                   {% endif %}
                   <input type="text" class="form-control" name="user_name" placeholder="Enter A Username">
                   <span class="input-group-btn">
@@ -98,7 +111,8 @@
               </div>
             </div>
           </div>
-          {% endif %}
+
+          
           <!-- Scores Table -->
           {% if details["TotalUsers"] %}
           {% if details["User"] not in "None" %}
@@ -117,21 +131,18 @@
                       </tr>
                     </thead>
                     <tbody>
+
+						
+					 {% for key in details["Winners"] %}
+					 
                       <tr>
-                        <td>1st</td>
-                        <td>john</td>
-                        <td>62</td>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ key  }}</td>
+                        <td>{{ details["ScoresBoard"][key]  }}</td>
                       </tr>
-                      <tr>
-                        <td>2nd</td>
-                        <td>Moe</td>
-                        <td>54</td>
-                      </tr>
-                      <tr>
-                        <td>3rd</td>
-                        <td>Garry</td>
-                        <td>48</td>
-                      </tr>
+						
+					 {% endfor %}					
+
                     </tbody>
                   </table>                
                 </div>
@@ -155,26 +166,67 @@
       <!-- /.container -->
     </footer>
   <script type="text/javascript">
-    window.onload = startInterval;
-    function startInterval()
-    {
-        setInterval("startTime();",1000);
+    document.getElementById("btnAnswer").addEventListener("click", checkAnswer);
+    function checkAnswer() {
+      var attempts = parseInt(document.getElementById("attempts").value, 10);
+      var userGuesses = document.getElementById("answer").value;
+      attempts += 1;
+      document.getElementById("answerAttempts").innerHTML = "Answer Attempts: " + attempts;
+      document.getElementById("attempts").value = attempts;
+      document.getElementById("answer").value = "";//resets the answer for further answers
+      document.getElementById("incorrectA").style.color = 'red';
+      var myNotice = "<strong>Wrong!</strong>:<br />";
+      var points = parseInt(document.getElementById("points").innerHTML, 10);
+
+       if(!compareAnswers(userGuesses,document.getElementById("user_received_answer").value)){
+         myNotice = "<strong>Correct!</strong>:<br />";
+         document.getElementById("incorrectA").style.color = 'green';
+         document.getElementById("incorrectA").innerHTML = myNotice + userGuesses;
+         // document.getElementById("formAnswers").submit()
+         autoLogIn((points + 1));
+
+       }else{
+         document.getElementById("incorrectA").innerHTML = myNotice + userGuesses;
+         document.getElementById("points").innerHTML = (points - 1);
+       }
+//       document.getElementById("guesses").innerHTML = userGuesses;
+       
+
+      function compareAnswers(userAnswer,gameAnswer) {
+         // Used to compare the user answer and the game answer;
+          return userAnswer.toLowerCase().localeCompare(gameAnswer.toLowerCase());
+      }
+
+      
+      function autoLogIn(points) {
+          var form = document.createElement("form");
+          var userName = document.createElement("input");  
+          var questionId = document.createElement("input");  
+          var pointsReceived = document.createElement("input");  
+      
+          form.method = "POST";
+          form.action = "/index/"; 
+          
+          questionId.setAttribute("type", "hidden");
+          questionId.value=document.getElementById("user_received_question").value;
+          questionId.name="questionId";
+          form.appendChild(questionId);
+          
+          userName.setAttribute("type", "hidden");
+          userName.name="userName";
+          userName.value=document.getElementById("this_user").value;
+          form.appendChild(userName);           
+          
+          pointsReceived.setAttribute("type", "hidden");
+          pointsReceived.name="pointsReceived";
+          pointsReceived.value=points;
+          form.appendChild(pointsReceived);               
+
+          document.body.appendChild(form);
+          form.submit();
+      }      
+      
     }
-    
-    function startTime()
-    {
-        document.getElementById('time').innerHTML = Date();  
-    }
-    
-    function SubmitForm()
-    {
-        if($("#formAnswers").is("clicked")){
-            document.forms['formAnswers'].action='http://cl.exct.net/subscribe.aspx';
-            document.forms['formAnswers'].target='_blank';
-            document.forms['formAnswers'].submit();
-        }
-        return false;
-    }   
   </script>
   </body>
 
