@@ -25,7 +25,11 @@ function checkAnswer() {
         document.getElementById("pointsMes").innerHTML = "POINTS LEFT:";
         points = parseInt(document.getElementById("points").innerHTML, 10);
         document.getElementById("points").innerHTML = (points - 1);
+        if((attempts) == 8){
+            window.location.reload();
+        }
     }
+    
 }
 
 function compareAnswers(userAnswer, gameAnswer) {
@@ -91,8 +95,8 @@ function autoLogIn(points) {
 
     document.body.appendChild(form);
     form.submit();
-}
 
+}
 
 document.getElementById("endSession").addEventListener("click", submitEndSessionRequest);
 function submitEndSessionRequest(){
@@ -118,3 +122,6 @@ function submitEndSessionRequest(){
     document.body.appendChild(form);
     form.submit();  
 }
+window.onload = function() {
+  document.getElementById("answer").focus();
+};
