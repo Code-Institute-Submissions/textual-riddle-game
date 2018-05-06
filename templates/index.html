@@ -1,233 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Riddle Game">
     <title>Text Riddle Game</title>
     <!-- Bootstrap core CSS -->
     <!-- Custom styles for this template -->
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/bootstrap.min.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  </head>
-
-  <body>
-
+</head>
+<body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-      <div class="container">
-        <a class="navbar-brand" href="#">Text-based Riddle Game</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home
-                <span class="sr-only">(current)</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">New Link</a>
-            </li>
-          </ul>
+        <div class="container">
+            <a class="navbar-brand" href="#">Text-based Riddle Game</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            <span id="endSession" name="endSession">End Your Session</span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Start New Game</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
-
     <!-- Page Content -->
     <div class="container">
+        <div class="row">
+            <!-- Game Entries Column -->
+            {% set col_1 = 12 %} {% if details["TotalUsers"] %} {% if details["User"] not in "None" %} {% set col_1 = 4 %}
+            <div class="col-md-8">
+                <h1 class="my-4">Start Playing {{ details["User"].title() }}</h1>
 
-      <div class="row">
+                <!-- Game Post -->
+                <div class="card mb-4">
+                    <div class="jumbotron jumbotron-fluid">
+                        <div class="container">
+                            <h1>Question <span class="small" style="margin-left:15px; color:#C0C0C0;">{{ details["HowManyQuestions"] }} of 30:</span></h1>
+                            <p>{{ details["QuestionsAnswers"]["question"] }}</p>
 
-        <!-- Game Entries Column -->
-        {% set col_1 = 12  %}
-        {% if details["TotalUsers"] %} 
-           
-           {% if details["User"] not in "None" %}
-              {% set col_1 = 4 %}
-        <div class="col-md-8">
-          <h1 class="my-4">Start Playing {{ details["User"].title() }}</h1>
-
-          <!-- Game Post -->
-          <div class="card mb-4">
-            <div class="jumbotron jumbotron-fluid">
-              <div class="container">
-                <h1>Question:</h1>      
-                <p>{{ details["QuestionsAnswers"]["question"] }}</p>
-                
-              </div>
-              <p style="margin-left:15px; color:#C0C0C0;">POINTS LEFT: <span id="points">10</span>{{ details["TestItCame"] }}</p>
-            </div>
-            <div class="card-body">
-              <h2 class="card-title" id="answerAttempts">Answer:</h2>
-              <form action="/index/" method="POST" id="formAnswers" name="formAnswers" onsubmit="return false">
-                <div class="answer">
-                  <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer">
-                  <button type="submit" class="btn btn-primary" id="btnAnswer">Submit Your Answer</button>
-                  <h5 style="float:right;"><span class="label label-default"><a href="/{{ details["User"].title() }}">[ Skip ]</a></span></h5>
-                  <p class="incorrectA" id="incorrectA"></p><span id="guesses"></span>
-                  <input name="this_user" type="hidden" id="this_user" value="{{ details["User"] }}" />
-                  <input name="this_user_reg_status" type="hidden" id="this_user_reg_status" value="{{ details["UserRegState"] }}" />
-                  <input name="attempts" type="hidden" id="attempts" value="0" />
-                  <input name="user_received_question" type="hidden" id="user_received_question" value="{{ details["QuestionsAnswers"]["id"] }}" />
-                  <input name="user_received_answer" type="hidden" id="user_received_answer" value="{{ details["QuestionsAnswers"]["answer"] }}" />
-                </div>
-              </form>
-            </div>
-            <div class="card-footer text-muted">
-            </div>
-          </div>
-          
-        </div>
-           {% endif %}
-       {% endif %} 
-        
-        
-        <!-- Sidebar Widgets Column -->
-        <div class="col-md-{{ col_1 }}">
-
-          <!-- Registration Table -->
-          {% if not details["UserRegState"] %} 
-          {% if details["TotalUsers"] <= 9  %} 
-          {% endif %}
-          {% endif %}          
-          <div class="card my-4">
-            <h5 class="card-header">Enter User</h5>
-            <div class="card-body">
-              <div class="input-group">
-                <form action="/index" method="POST" name="user_form">
-                  {% if true %}
-                  <p>{{ details["Notice"][details["Status"]] }}</p>
-                  {% endif %}
-                  <input type="text" class="form-control" name="user_name" placeholder="Enter A Username">
-                  <span class="input-group-btn">
-                    <div class="users">
-                      <button class="btn btn-secondary" type="submit">Go!</button>
+                        </div>
+                        <p style="margin-left:15px; color:#C0C0C0;"><span id="pointsMes">POINTS:</span>
+                            <span id="points">10</span></p>
                     </div>
-                  </span>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          
-          <!-- Scores Table -->
-          {% if details["TotalUsers"] %}
-          {% if details["User"] not in "None" %}
-          <div class="card my-4">
-            <h5 class="card-header">Scores Board</h5>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div id="time"></div>
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Rank</th>
-                        <th>Username</th>
-                        <th>Points</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-						
-					 {% for key in details["Winners"] %}
-					 
-                      <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ key  }}</td>
-                        <td>{{ details["ScoresBoard"][key]  }}</td>
-                      </tr>
-						
-					 {% endfor %}					
-
-                    </tbody>
-                  </table>                
+                    <div class="card-body">
+                        <h2 class="card-title" id="answerAttempts">Answer:</h2>
+                        
+                        <form id="formAnswers" name="formAnswers" onsubmit="return false">
+                            <div class="answer">
+                                <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer">
+                                <button type="submit" class="btn btn-primary" id="btnAnswer">Submit Your Answer</button>
+                                <h5 style="float:right;">
+                                    <span class="label label-default">
+                                        <a href="/{{ details["User"].title() }}">[ Skip ]</a>
+                                    </span>
+                                </h5>
+                                <p class="incorrectA" id="incorrectA"></p>
+                                <span id="guesses">
+                                    <ol id="guessed"></ol>
+                                </span>
+                                <input name="this_user" type="hidden" id="this_user" value="{{ details["User"] }}" />
+                                <input name="this_user_reg_status" type="hidden" id="this_user_reg_status" value="{{ details["UserRegState"] }}" />
+                                <input name="attempts" type="hidden" id="attempts" value="0" />
+                                <input name="user_received_question" type="hidden" id="user_received_question" value="{{ details["QuestionsAnswers"]["id"] }}" />
+                                <input name="user_received_answer" type="hidden" id="user_received_answer" value="{{ details["QuestionsAnswers"]["answer"] }}" />
+                                <input name="noPlayers" type="hidden" id="noPlayers" value="{{ details["Players"] }}"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-muted">
+                    </div>
                 </div>
-              </div>
+
             </div>
-          </div>
-          {% endif %}
-          {% endif %}
+            {% endif %} {% endif %}
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-{{ col_1 }}">
+                <!-- Registration Table -->
+                {% if not details["UserRegState"] %} {% if details["TotalUsers"] <= 9 %} {% endif %} {% endif %} <div class="card my-4">
+                    <h5 class="card-header">Enter User</h5>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <form action="/index" method="POST" name="user_form">
+                                <div class="input-group">
+                                  <span class="input-group-addon">Select Number Of Players: </span> 
+    								
+    								  {% if details["Players"]  > 0 %}
+    								  <select id="players" name="players" style="width:100%" class="form-control">
+    								  <option value="{{ details["Players"] }}">{{ details["Players"] }} Player(s)</option>
+    								  </select>
+    								  {% else %}
+    								  <select id="players" name="players"  style="width:100%" class="form-control">
+    								  <option value="1">1 Player</option>
+    								  <option value="2">2 Players</option>
+    								  <option value="3">3 Players</option>
+    								  <option value="4">4 Players</option>
+    								  <option value="5">5 Players</option>
+    								  <option value="6">6 Players</option>
+    								  <option value="7">7 Players</option>
+    								  <option value="8">8 Players</option>  
+    								  <option value="9">9 Players</option>
+    								  <option value="10">10 Players</option>
+    								  </select>
+    								  {% endif %}
+    								
+                                </div><br />
+                                <div class="input-group">
+                                  <span class="input-group-addon">Team: </span>
+                                  {% if not details["Team"] %} 
+                                  <input type="text" class="form-control"  style="width:100%" id="team_name" name="team_name" placeholder="Enter Team Name" value="{{ details["Team"] }}">
+                                  {% else %}
+                                  <input type="text" class="form-control" style="width:100%"  id="team_name" name="team_name" placeholder="Enter Team Name" value="{{ details["Team"] }}" readonly="readonly">
+                                  {% endif %}
+                                  <input name="reg_players" type="hidden" id="reg_players" value="{{ details["regPlayers"] }}" />
+                                </div>
+                                {% set show = 1 %}
+                                {% if details["Players"] %} 
+                                    {% if details["regPlayers"] == details["Players"] %} 
+                                        {% set show = 0 %}    
+                                    {% endif %}                                
+                                {% endif %}
+                                {% if show  %}
+                                <br />
+                                <span class="input-group-addon">User: </span> 
+                                <input type="text" class="form-control"  style="width:100%" id="user_name" name="user_name" placeholder="Enter A Username">
+                                
+                                <span class="input-group-btn">
+                                    <div class="users">
+                                        
+                                        <button class="btn btn-secondary" name="user_submit_button" style="width:100%" type="submit">Go!</button>
+                                    </div>
+                                </span>
+                                
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Scores Table -->
+            {% if details["HowManyQuestions"] >= 10 %}
+            <div class="card my-4">
+                <h5 class="card-header">Scores Board</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="time"></div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Username</th>
+                                        <th>Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    {% for key in details["Winners"] %}
+
+                                    <tr>
+                                        <td>{{ details["ranks"][loop.index]}}</td>
+                                        <td>{{ key }}</td>
+                                        <td>{{ details["ScoresBoard"][key] }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
-      </div>
-      <!-- /.row -->
+    </div>
+    <!-- /.row -->
 
     </div>
     <!-- /.container -->
 
     <!-- Footer -->
     <footer class="py-5 bg-dark">
-      <div class="container">
-        <p class="m-0 text-center text-white">Text Riddle Game 2018</p>
-      </div>
-      <!-- /.container -->
+        <div class="container">
+            <p class="m-0 text-center text-white">Text Riddle Game 2018</p>
+        </div>
+        <!-- /.container -->
     </footer>
-  <script type="text/javascript">
-    document.getElementById("btnAnswer").addEventListener("click", checkAnswer);
-    function checkAnswer() {
-      var attempts = parseInt(document.getElementById("attempts").value, 10);
-      var userGuesses = document.getElementById("answer").value;
-      attempts += 1;
-      document.getElementById("answerAttempts").innerHTML = "Answer Attempts: " + attempts;
-      document.getElementById("attempts").value = attempts;
-      document.getElementById("answer").value = "";//resets the answer for further answers
-      document.getElementById("incorrectA").style.color = 'red';
-      var myNotice = "<strong>Wrong!</strong>:<br />";
-      var points = parseInt(document.getElementById("points").innerHTML, 10);
-
-       if(!compareAnswers(userGuesses,document.getElementById("user_received_answer").value)){
-         myNotice = "<strong>Correct!</strong>:<br />";
-         document.getElementById("incorrectA").style.color = 'green';
-         document.getElementById("incorrectA").innerHTML = myNotice + userGuesses;
-         // document.getElementById("formAnswers").submit()
-         autoLogIn((points + 1));
-
-       }else{
-         document.getElementById("incorrectA").innerHTML = myNotice + userGuesses;
-         document.getElementById("points").innerHTML = (points - 1);
-       }
-//       document.getElementById("guesses").innerHTML = userGuesses;
-       
-
-      function compareAnswers(userAnswer,gameAnswer) {
-         // Used to compare the user answer and the game answer;
-          return userAnswer.toLowerCase().localeCompare(gameAnswer.toLowerCase());
-      }
-
-      
-      function autoLogIn(points) {
-          var form = document.createElement("form");
-          var userName = document.createElement("input");  
-          var questionId = document.createElement("input");  
-          var pointsReceived = document.createElement("input");  
-      
-          form.method = "POST";
-          form.action = "/index/"; 
-          
-          questionId.setAttribute("type", "hidden");
-          questionId.value=document.getElementById("user_received_question").value;
-          questionId.name="questionId";
-          form.appendChild(questionId);
-          
-          userName.setAttribute("type", "hidden");
-          userName.name="userName";
-          userName.value=document.getElementById("this_user").value;
-          form.appendChild(userName);           
-          
-          pointsReceived.setAttribute("type", "hidden");
-          pointsReceived.name="pointsReceived";
-          pointsReceived.value=points;
-          form.appendChild(pointsReceived);               
-
-          document.body.appendChild(form);
-          form.submit();
-      }      
-      
-    }
-  </script>
-  </body>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+</body>
 
 </html>
