@@ -165,7 +165,7 @@ def end_session():
 @app.route('/')
 def index_start():
    """ When a user visits the site directly, the none is used as entry"""
-   clean_files() #clean the files so that users that have been inactive for sometimes are removed.
+   #clean_files() #clean the files so that users that have been inactive for sometimes are removed.
    info = "None" #Prompt to enter a username
    global team
    global players
