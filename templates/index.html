@@ -54,18 +54,23 @@
                         <p style="margin-left:15px; color:#C0C0C0;"><span id="pointsMes">POINTS:</span>
                             <span id="points">10</span></p>
                     </div>
+                    
                     <div class="card-body">
+                        {% if details["HowManyQuestions"] < 31 %}
                         <h2 class="card-title" id="answerAttempts">Answer:</h2>
-                        
+                        {% endif %}
                         <form id="formAnswers" name="formAnswers" onsubmit="return false">
                             <div class="answer">
+                                {% if details["HowManyQuestions"] < 31 %}
                                 <input type="text" class="form-control" id="answer" placeholder="Enter your answer:" name="answer">
                                 <button type="submit" class="btn btn-primary" id="btnAnswer">Submit Your Answer</button>
+                                
                                 <h5 style="float:right;">
                                     <span class="label label-default">
                                         <a href="/{{ details["User"].title() }}">[ Skip ]</a>
                                     </span>
                                 </h5>
+                                {% endif %}
                                 <p class="incorrectA" id="incorrectA"></p>
                                 <span id="guesses">
                                     <ol id="guessed"></ol>
@@ -79,6 +84,7 @@
                             </div>
                         </form>
                     </div>
+                    
                     <div class="card-footer text-muted">
                     </div>
                 </div>
@@ -118,11 +124,11 @@
     								
                                 </div><br />
                                 <div class="input-group">
-                                  <span class="input-group-addon">Team: </span>
+                                  <span class="input-group-addon">Group: </span>
                                   {% if not details["Team"] %} 
-                                  <input type="text" class="form-control"  style="width:100%" id="team_name" name="team_name" placeholder="Enter Team Name" value="{{ details["Team"] }}">
+                                  <input type="text" class="form-control"  style="width:100%" id="team_name" name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}">
                                   {% else %}
-                                  <input type="text" class="form-control" style="width:100%"  id="team_name" name="team_name" placeholder="Enter Team Name" value="{{ details["Team"] }}" readonly="readonly">
+                                  <input type="text" class="form-control" style="width:100%"  id="team_name" name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}" readonly="readonly">
                                   {% endif %}
                                   <input name="reg_players" type="hidden" id="reg_players" value="{{ details["regPlayers"] }}" />
                                 </div>
@@ -148,6 +154,29 @@
                             </form>
                         </div>
                     </div>
+                {% if details["HowManyQuestions"] < 10 %}    
+                <!-- Rules -->
+                    <h5 class="card-header">Rules</h5>
+                    <div class="card-body">
+                        <div class="input-group">
+                                <div class="input-group">
+                                  <span class="input-group-addon" style="font-weight:800">Number of players: </span>
+								 <p>This game allows single or up to 9 multiple players at a time. In order to play alone, select 1 player, and then enter a group name, and your user name and start.</p>	
+                                  <span class="input-group-addon" style="font-weight:800">Group:</span>
+							     <p>If you have a group of friends that you wish to compete with, enter a group name that everyone within the group should use. With this, everyone within the group will be competing with each other</p>
+                                  
+                                  <span class="input-group-addon" style="font-weight:800">User:</span>
+							     <p>This is the username you wish to use in playing the game. Every player, single or multiple, must have a user name, and play under a group name.</p>
+                                  
+                                  <span class="input-group-addon" style="font-weight:800">Scoreboard:</span>
+								 <p>When you start playing, the scoreboard will not be visible to you. After attempting up to 10 questions, the scoreboard will appear, and be visible throughout the game.</p>
+                                  <span class="input-group-addon" style="font-weight:800">Questions & Answers:</span>
+								 <p>As you answer questions correctly, points will be added to you. If wrong, a point is deducted from the points associated with the question. After 8 incorrect answers, a new question will be loaded. All incorrect guesses are displayed for you to see.</p>									 
+                                </div>
+                        </div>
+                    </div>
+                <!-- Rules section ends-->
+                {% endif %}
             </div>
 
             <!-- Scores Table -->
