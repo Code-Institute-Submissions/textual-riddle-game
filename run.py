@@ -52,7 +52,16 @@ def random_question():
     with open("data/questions.json", "r") as questions:
         data = json.load(questions)
         return random.choice(data)
-            
+
+def random_question_exc(excludelist):
+    """This is to generate a random questions and answer combined. All questions that have been asked before are excluded"""
+    with open("data/questions.json", "r") as questions:
+        data = json.load(questions)
+        excluded = []
+        for item, value in enumerate(data):
+            if str(item) not in excludelist:
+                excluded.append(value)
+        return random.choice(excluded)            
             
 def write_to_file(file_name, data):
     """This function handles all the file writing"""
@@ -112,14 +121,21 @@ def remove_team_from_file(team_name):
     """Remove a team name from the file"""
     team_name += "\n"
     file = open("data/users.txt","r")
-    lines = file.readlines()
-    file.close()
-    
+    try:
+        lines = file.readlines()
+        file.close()
+    except: 
+        pass
+
     file = open("data/users.txt","w")
     for line in lines:
       if line != team_name:
-        file.write(line)
-        file.close()
+            try:
+                file.write(line)
+                file.close()
+            except: 
+                pass                  
+
 
 
 def delete_user_from_board(team,name):
@@ -163,7 +179,11 @@ def end_session():
 @app.route('/')
 def index_start():
    """ When a user visits the site directly, the none is used as entry"""
-   clean_files() #clean the files so that users that have been inactive for sometimes are removed.
+   try:
+        clean_files() #clean the files so that users that have been inactive for sometimes are removed.
+   except: 
+        pass
+   
    info = "None" #Prompt to enter a username
    global team
    global players
@@ -269,14 +289,10 @@ def index(user):
         }
         reg_players = 0
         return render_template("index.html", details = game_info)  
-    else:    
-        random_questions = random_question()#get the question field
-        question_id = random_questions["id"]
-        questions_list = [question_id]
+    else:
 
         game_info["User"] = user
         game_info["TotalUsers"] = count_users()
-        game_info["QuestionsAnswers"] = random_questions
         game_info["Notice"] = status_message
         game_info["ranks"] = ranks
         game_info["Status"] = reg_status  
@@ -287,6 +303,10 @@ def index(user):
         game_info["regPlayers"] = reg_players  
         game_info["ScoresBoard"] = get_names_score_position("None",team)
         game_info["Winners"] = get_names_score_position("sorted",team)
+        random_questions = random_question_exc(user_questions_list)#get the question field
+        question_id = random_questions["id"]
+        questions_list = [question_id]
+        game_info["QuestionsAnswers"] = random_questions
         all_user_questions = user_questions_list + questions_list
         game_info["HowManyQuestions"] = len(all_user_questions)
         update_scores(team,user,"Questions",questions_list)#scores have updated  
