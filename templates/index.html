@@ -126,9 +126,9 @@
                                 <div class="input-group">
                                   <span class="input-group-addon">Group: </span>
                                   {% if not details["Team"] %} 
-                                  <input type="text" class="form-control"  style="width:100%" id="team_name" name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}">
+                                  <input type="text" class="form-control"  style="width:100%" id="team_name" required="required" name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}">
                                   {% else %}
-                                  <input type="text" class="form-control" style="width:100%"  id="team_name" name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}" readonly="readonly">
+                                  <input type="text" class="form-control" style="width:100%"  id="team_name"  name="team_name" placeholder="Enter Group Name" value="{{ details["Team"] }}" readonly="readonly">
                                   {% endif %}
                                   <input name="reg_players" type="hidden" id="reg_players" value="{{ details["regPlayers"] }}" />
                                 </div>
@@ -141,7 +141,7 @@
                                 {% if show  %}
                                 <br />
                                 <span class="input-group-addon">User: </span> 
-                                <input type="text" class="form-control"  style="width:100%" id="user_name" name="user_name" placeholder="Enter A Username">
+                                <input type="text" class="form-control"  style="width:100%" id="user_name" name="user_name" placeholder="Enter A Username"  required="required">
                                 
                                 <span class="input-group-btn">
                                     <div class="users">
